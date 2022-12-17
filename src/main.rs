@@ -29,6 +29,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let window_context = ContextBuilder::new()
         .with_vsync(true)
+        .with_multisampling(16)
         .build_windowed(window_builder, &event_loop)?;
 
     let window_context = unsafe { window_context.make_current().unwrap() };
@@ -38,7 +39,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut canvas = Canvas::new(renderer)?;
     let size = window_context.window().inner_size();
     canvas.set_size(
-        size.width ,
+        size.width,
         size.height,
         window_context.window().scale_factor() as f32,
     );
@@ -67,23 +68,22 @@ fn main() -> Result<(), Box<dyn Error>> {
             .unwrap()
     };
 
-    let images = Rc::new(RefCell::new(vec![create_image(), create_image(), create_image()]));
-    let unused_images = Rc::new(RefCell::new(vec![0, 1, 2]));
+    let images = Rc::new(RefCell::new(vec![]));
+    let unused_images = Rc::new(RefCell::new(vec![]));
+
+    {
+        let mut images = images.borrow_mut();
+        let mut unused_images = unused_images.borrow_mut();
+        for i in 0..10 {
+            images.push(create_image());
+            unused_images.push(i);
+        }
+    }
 
     let explosions = Rc::new(RefCell::new(Vec::new()));
 
     let mut last_explosion_time = 0.0;
-    /*
-    Explosion::spawn(
-        5.0,
-        160,
-        images.clone(),
-        unused_images.clone(),
-        explosions.clone(),
-        &mut canvas,
-    )
-    .unwrap();
-     */
+    let mut last_fps_report = 0.0;
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -125,12 +125,14 @@ fn main() -> Result<(), Box<dyn Error>> {
                         for i in 0..images.len() {
                             //canvas.realloc_image(images[i], canvas.width() as usize, canvas.height() as usize, PixelFormat::Rgba8, ImageFlags::empty()).unwrap();
                             canvas.delete_image(images[i]);
-                            images[i] = canvas.create_image_empty(
-                                canvas.width() as usize,
-                                canvas.height() as usize,
-                                PixelFormat::Rgba8,
-                                ImageFlags::empty()
-                            ).unwrap();
+                            images[i] = canvas
+                                .create_image_empty(
+                                    canvas.width() as usize,
+                                    canvas.height() as usize,
+                                    PixelFormat::Rgba8,
+                                    ImageFlags::empty(),
+                                )
+                                .unwrap();
                         }
 
                         println!("Resize! w: {} h: {}", size.width, size.height);
@@ -144,10 +146,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                             1.0,
                         );
 
-
                         canvas.set_render_target(Image(star_image));
 
-                        canvas.clear_rect(0, 0, canvas.width() as u32, canvas.height() as u32, Color::black());
+                        canvas.clear_rect(
+                            0,
+                            0,
+                            canvas.width() as u32,
+                            canvas.height() as u32,
+                            Color::black(),
+                        );
 
                         for _ in 0..1000 {
                             let x = rng.gen_range(0.0..(canvas.width()));
@@ -186,14 +193,26 @@ fn main() -> Result<(), Box<dyn Error>> {
                         explosions.clone(),
                         &mut canvas,
                     )
-                        .unwrap();
+                    .unwrap();
                     last_explosion_time = 0.0;
+                }
+
+                last_fps_report += delta_time;
+                if last_fps_report >= 1.0 {
+                    println!("FPS: {}", 1.0 / delta_time);
+                    last_fps_report = 0.0;
                 }
 
                 canvas.set_render_target(RenderTarget::Screen);
                 canvas.global_composite_operation(CompositeOperation::SourceOver);
 
-                canvas.clear_rect(0, 0, canvas.width() as u32, canvas.height() as u32, Color::white());
+                canvas.clear_rect(
+                    0,
+                    0,
+                    canvas.width() as u32,
+                    canvas.height() as u32,
+                    Color::white(),
+                );
 
                 let mut star_path = Path::new();
                 star_path.rect(0.0, 0.0, canvas.width(), canvas.height());
@@ -229,7 +248,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                         image_path.rect(0.0, 0.0, canvas.width(), canvas.height());
                         canvas.fill_path(
                             &mut image_path,
-                            Paint::image(image, 0.0, 0.0, canvas.width(), canvas.height(), 0.0, alpha),
+                            Paint::image(
+                                image,
+                                0.0,
+                                0.0,
+                                canvas.width(),
+                                canvas.height(),
+                                0.0,
+                                alpha,
+                            ),
                         );
                     }
                 }

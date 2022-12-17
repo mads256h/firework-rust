@@ -69,7 +69,7 @@ impl Explosion {
                 Sparkle::new(
                     initial_position,
                     Vector2D::new(x, y),
-                    if i % 2 == 0 { color1 } else { color2 }
+                    if i % 2 == 0 { color1 } else { color2 },
                 )
             })
             .collect();
@@ -83,7 +83,7 @@ impl Explosion {
             images,
             image_index,
             unused_images,
-            gravity_factor: 0.0
+            gravity_factor: 0.0,
         });
 
         Ok(())
@@ -99,7 +99,12 @@ impl Explosion {
 
         for sparkle in &mut self.sparkles {
             // Draw sparkles
-            sparkle.update_and_draw(delta_time, self.gravity_factor, self.time_left / self.lifetime, canvas);
+            sparkle.update_and_draw(
+                delta_time,
+                self.gravity_factor,
+                self.time_left / self.lifetime,
+                canvas,
+            );
         }
 
         canvas.flush();
@@ -107,15 +112,19 @@ impl Explosion {
         self.time_left -= delta_time;
 
         if self.time_left <= 0.0 {
-            canvas.clear_rect(0, 0, canvas.width() as u32, canvas.height() as u32, Color::rgba(0,0,0,0))
+            canvas.clear_rect(
+                0,
+                0,
+                canvas.width() as u32,
+                canvas.height() as u32,
+                Color::rgba(0, 0, 0, 0),
+            )
         }
-
 
         if self.time_left > BEGIN_FADE_OUT_TIME {
             1.0
-        }
-        else {
-            self.time_left / 1.0
+        } else {
+            self.time_left / BEGIN_FADE_OUT_TIME
         }
     }
 
