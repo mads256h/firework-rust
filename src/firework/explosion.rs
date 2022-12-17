@@ -52,8 +52,8 @@ impl Explosion {
         let mut rng = rand::thread_rng();
 
         let initial_position = Vector2D::new(
-            rng.gen_range(0.0..canvas.width()),
-            rng.gen_range(0.0..canvas.height()),
+            rng.gen_range(50.0..canvas.width() - 50.0),
+            rng.gen_range(50.0..canvas.height() - 50.0),
         );
 
         let color1 = Explosion::generate_color(&mut rng);

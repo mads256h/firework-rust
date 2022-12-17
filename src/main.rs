@@ -12,9 +12,10 @@ use std::cell::RefCell;
 use std::error::Error;
 use std::rc::Rc;
 use std::time::Instant;
-use winit::event::{Event, WindowEvent};
+use winit::event::{ElementState, Event, VirtualKeyCode, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop};
-use winit::window::WindowBuilder;
+use winit::monitor::VideoMode;
+use winit::window::{Fullscreen, WindowBuilder};
 
 fn main() -> Result<(), Box<dyn Error>> {
     println!("Hello, world!");
@@ -25,6 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let window_builder = WindowBuilder::new()
         .with_resizable(true)
+        .with_decorations(false)
         .with_title("Fireworks!");
 
     let window_context = ContextBuilder::new()
@@ -160,8 +162,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                             let x = rng.gen_range(0.0..(canvas.width()));
                             let y = rng.gen_range(0.0..(canvas.height()));
 
+                            let size = rng.gen_range(1.0..2.0);
+
                             let mut path = Path::new();
-                            path.rect(x, y, 1.0, 1.0);
+                            path.rect(x, y, size, size);
 
                             let paint = Paint::color(Color::white());
 
@@ -169,6 +173,35 @@ fn main() -> Result<(), Box<dyn Error>> {
                         }
 
                         canvas.set_render_target(RenderTarget::Screen);
+                    }
+                }
+                WindowEvent::KeyboardInput { input, .. } => {
+                    if let Some(keycode) = input.virtual_keycode {
+                        if input.state == ElementState::Pressed && keycode == VirtualKeyCode::F {
+                            let is_fullscreen = window.fullscreen().map(|_| true).unwrap_or(false);
+                            window.set_fullscreen(if is_fullscreen {
+                                None
+                            } else {
+                                let monitor = window.current_monitor().unwrap();
+                                let monitor_size = monitor.size();
+                                let video_mode = monitor
+                                    .video_modes()
+                                    .filter(|v| v.size() == monitor_size)
+                                    .max_by(|a, b| a.refresh_rate().cmp(&b.refresh_rate()));
+
+                                println!("{video_mode:?}");
+
+                                if let Some(video_mode) = video_mode {
+                                    Some(Fullscreen::Exclusive(video_mode))
+                                } else {
+                                    Some(Fullscreen::Borderless(Some(monitor)))
+                                }
+                            });
+                        }
+
+                        if keycode == VirtualKeyCode::Q || keycode == VirtualKeyCode::Escape {
+                            *control_flow = ControlFlow::Exit;
+                        }
                     }
                 }
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
