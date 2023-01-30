@@ -9,5 +9,5 @@ edition = "2021"
 rand = "0.8.5"
 simple-error = "0.2.3"
 femtovg = "0.3.7"
-winit = { version = "0.26.1", features = ["x11"] }
+winit = { version = "0.27.5", features = ["x11"] }
 glutin = { version = "0.28.0", features = ["x11"] }
