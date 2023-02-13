@@ -276,15 +276,14 @@ checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
 
 [[package]]
 name = "femtovg"
-version = "0.3.7"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee414272cecbd415cad78d9f9a9251613e2be9c9c26b809e4cb7eaa82f7d3801"
+checksum = "5ba0074b3a9ae8ffdf581dc28026435062cceed37f893d1be1ff91a457ad8284"
 dependencies = [
  "bitflags",
  "fnv",
  "generational-arena",
  "glow",
- "glutin",
  "image",
  "imgref",
  "lru",
@@ -362,9 +361,9 @@ dependencies = [
 
 [[package]]
 name = "glow"
-version = "0.11.2"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8bd5877156a19b8ac83a29b2306fe20537429d318f3ff0a1a2119f8d9c61919"
+checksum = "8edf6019dff2d92ad27c1e3ff82ad50a0aea5b01370353cc928bfdc33e95925c"
 dependencies = [
  "js-sys",
  "slotmap",
@@ -545,9 +544,9 @@ dependencies = [
 
 [[package]]
 name = "lru"
-version = "0.7.8"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e999beba7b6e8345721bd280141ed958096a2e4abdf74f67ff4ce49b4b54e47a"
+checksum = "71e7d46de488603ffdd5f30afbc64fbba2378214a2c3a2fb83abf3d33126df17"
 
 [[package]]
 name = "malloc_buf"
@@ -941,9 +940,9 @@ dependencies = [
 
 [[package]]
 name = "rustybuzz"
-version = "0.6.0"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab9e34ecf6900625412355a61bda0bd68099fe674de707c67e5e4aed2c05e489"
+checksum = "162bdf42e261bee271b3957691018634488084ef577dddeb6420a9684cab2a6a"
 dependencies = [
  "bitflags",
  "bytemuck",
@@ -1071,9 +1070,9 @@ dependencies = [
 
 [[package]]
 name = "ttf-parser"
-version = "0.17.1"
+version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "375812fa44dab6df41c195cd2f7fecb488f6c09fbaafb62807488cefab642bff"
+checksum = "0609f771ad9c6155384897e1df4d948e692667cc0588548b68eb44d052b27633"
 
 [[package]]
 name = "unicode-bidi"
