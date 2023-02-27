@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 rand = "0.8.5"
-simple-error = "0.2.3"
+simple-error = "0.3.0"
 femtovg = "0.3.7"
 winit = { version = "0.26.1", features = ["x11"] }
 glutin = { version = "0.28.0", features = ["x11"] }
